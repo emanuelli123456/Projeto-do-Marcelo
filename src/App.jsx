@@ -20,11 +20,11 @@ export default function App() {
     setErro('');
     setUsuario({ ...perfil, token: token.trim() });//Guarde o perfil e o token para as proximas ações
   }
-    // Sem usuário, mostre apenas o acesso.
-    if (!usuario)
+  // Sem usuário, mostre apenas o acesso.
+  if (!usuario)
     return (
       <main className="pagina">
-        <form onSubmit={entrar}>
+        <form onSubmit={entra}>
           <h1>Acesso de estudo</h1>
           <p>Simulação: não use senha real.</p>
           <label>
@@ -40,13 +40,28 @@ export default function App() {
         </form>
       </main>
     );
-   
-  return <Painel usuario={null} sair={() => { }} />; // @APP_RETORNO
+
+  //Envie o usuario para a parte de trabalho
+  return (
+    <Painel
+      usuario={usuario}
+      sair={() => {
+        //Sair apagar o acesso e a mensagem, sem fechar o navegador
+        setUsuario(null);
+        setToken('');
+        setErro('');
+      }}
+    />
+  );
 }
 
 // PARTE 2: lista, busca, cadastro e ações nos chamados.
 function Painel({ usuario, sair }) {
-  // @PAINEL_ESTADOS
+
+  const [tela, setTela] = useState('lista');// Qual parte do painel está aberta?
+  const [lista, setLista] = useState([]);// A lista começa sem registros e será preenchida pelo serviço.
+  const [ocupado, setOcupado] = useState(false);// Enquanto uma ação roda, ocupado vale true.
+  const [erro, setErro] = useState('');
   // @CARREGAR
   // @BUSCA_ESTADO
   // @BUSCA_CALCULO
@@ -60,8 +75,21 @@ function Painel({ usuario, sair }) {
     <main className="pagina">
       <h1>Minha Central de Chamados</h1>
       <p>Modo: {MODO}</p>
-      {/* @USUARIO */}
-      {/* @NAVEGACAO */}
+      {/*O nome vem do usuaio que entrou, não de txto fixo */}
+      <p>
+        Olá, {usuario ?.nome}
+        <button onClick={sair}>Sair</button>
+      </p>
+      <p>Boas-vindas, {usuario?.nome}</p>
+      {/* Estes botões mudam apenas a tela aberta. */}
+      <nav>
+        <button onClick={() => setTela('lista')}>Chamados</button>
+        <button onClick={() => setTela('novo')}>
+          Novo chamado
+          </button>
+      </nav>
+      <p>Tela: {tela}</p>
+
       {/* @ERRO */}
       {/* @FORMULARIO */}
       {/* @BUSCA_CAMPO */}
